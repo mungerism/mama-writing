@@ -1,0 +1,465 @@
+/* ========================================
+   CSS Variables & Base Reset
+   ======================================== */
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #0f3460;
+  --accent: #e94560;
+  --accent-glow: rgba(233, 69, 96, 0.3);
+  --text-primary: #f1f1f1;
+  --text-secondary: #a8a8b3;
+  --grid-border: #c0392b;
+  --grid-dash: rgba(192, 57, 43, 0.4);
+  --gold: #f1c40f;
+  --success: #2ecc71;
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --font: 'Noto Sans SC', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, #1a1a3e 100%);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ========================================
+   Page Transitions
+   ======================================== */
+.page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: scale(0.95);
+}
+
+.page.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+/* ========================================
+   Header & Progress
+   ======================================== */
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 32px;
+}
+
+.dot {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.dot.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 0 20px var(--accent-glow);
+  transform: scale(1.15);
+}
+
+.dot.done {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+  box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
+}
+
+.progress-track {
+  width: 180px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* ========================================
+   Practice Area
+   ======================================== */
+.practice-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.hint-text {
+  font-size: 18px;
+  color: var(--text-secondary);
+  text-align: center;
+  min-height: 28px;
+  transition: opacity 0.3s ease;
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.grid-wrapper {
+  position: relative;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+}
+
+/* ========================================
+   田字格（Tian Zi Ge Grid）
+   ======================================== */
+.tian-zi-ge {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  background: #fffef5;
+  border: 3px solid var(--grid-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.grid-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.grid-lines .line {
+  position: absolute;
+  background: transparent;
+}
+
+.grid-lines .line.horizontal {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1.5px dashed var(--grid-dash);
+  transform: translateY(-50%);
+}
+
+.grid-lines .line.vertical {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1.5px dashed var(--grid-dash);
+  transform: translateX(-50%);
+}
+
+#writer-container {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+#writer-container svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ========================================
+   Stroke Counter
+   ======================================== */
+.stroke-counter {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.stroke-counter strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ========================================
+   Buttons
+   ======================================== */
+.action-area {
+  margin-top: 24px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 36px;
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.btn-next {
+  background: linear-gradient(135deg, var(--accent), #c0392b);
+  color: white;
+  box-shadow: 0 8px 30px var(--accent-glow);
+  animation: bounceIn 0.5s ease;
+}
+
+.btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px var(--accent-glow);
+}
+
+.btn-next:active {
+  transform: translateY(0);
+}
+
+.btn-restart {
+  background: linear-gradient(135deg, var(--success), #27ae60);
+  color: white;
+  box-shadow: 0 8px 30px rgba(46, 204, 113, 0.3);
+}
+
+.btn-restart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(46, 204, 113, 0.4);
+}
+
+.btn-restart:active {
+  transform: translateY(0);
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ========================================
+   Complete Page
+   ======================================== */
+.complete-content {
+  text-align: center;
+  animation: fadeInUp 0.8s ease;
+}
+
+.celebration-emoji {
+  font-size: 72px;
+  animation: bounce 1s ease infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.complete-title {
+  font-size: 40px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.complete-subtitle {
+  font-size: 20px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.complete-characters {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.complete-char {
+  width: 120px;
+  height: 120px;
+  background: #fffef5;
+  border: 3px solid var(--grid-border);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  animation: popIn 0.5s ease backwards;
+}
+
+.complete-char:nth-child(1) { animation-delay: 0.2s; }
+.complete-char:nth-child(2) { animation-delay: 0.5s; }
+.complete-char:nth-child(3) { animation-delay: 0.8s; }
+
+.complete-char .mini-grid-h,
+.complete-char .mini-grid-v {
+  position: absolute;
+  pointer-events: none;
+}
+
+.complete-char .mini-grid-h {
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--grid-dash);
+}
+
+.complete-char .mini-grid-v {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--grid-dash);
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ========================================
+   Confetti particles (celebration)
+   ======================================== */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(-10vh) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) rotate(720deg);
+  }
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 400px) {
+  .tian-zi-ge {
+    width: 280px;
+    height: 280px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .dot {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  .complete-char {
+    width: 90px;
+    height: 90px;
+  }
+}
