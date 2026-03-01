@@ -232,10 +232,12 @@ function startQuiz() {
                 // 等语音和礼花都完成后再跳转
                 var speechDone = false;
                 var confettiDone = false;
+                var proceeded = false; // 防止重复跳转
                 var isLast = currentCharIndex >= CHARACTERS.length - 1;
 
                 function tryProceed() {
-                    if (!speechDone || !confettiDone) return;
+                    if (!speechDone || !confettiDone || proceeded) return;
+                    proceeded = true;
                     if (isLast) {
                         setTimeout(showCompletePage, 300);
                     } else {
