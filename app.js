@@ -27,9 +27,19 @@ const hintText = document.getElementById('hint-text');
 const currentStrokeEl = document.getElementById('current-stroke');
 const totalStrokesEl = document.getElementById('total-strokes');
 const progressFill = document.getElementById('progress-fill');
+const startPage = document.getElementById('start-page');
 const practicePage = document.getElementById('practice-page');
 const completePage = document.getElementById('complete-page');
 const completeCharsContainer = document.getElementById('complete-characters');
+
+// ========================================
+//  开始应用（用户点击后触发，解决微信浏览器语音限制）
+// ========================================
+function startApp() {
+    startPage.classList.remove('active');
+    practicePage.classList.add('active');
+    initCharacter(0);
+}
 
 // ========================================
 //  语音合成
@@ -103,6 +113,7 @@ function updateStrokeCounter(current, total) {
 function initCharacter(charIndex) {
     currentCharIndex = charIndex;
     completedStrokes = 0;
+    quizStarted = false; // 重置，允许新字启动 quiz
     const char = CHARACTERS[charIndex];
 
     // 清除旧的 writer
@@ -144,15 +155,16 @@ function initCharacter(charIndex) {
         }
     });
 
-    // 语音播报
-    speak('跟着我写，' + char);
+    hintText.textContent = '跟着红色笔画写一写吧！';
 
-    // 固定延迟后开始红色笔画演示（不依赖语音回调，确保一定触发）
+    // 语音播报完成后开始红色笔画演示
+    speak('跟着我写，' + char, function () {
+        startQuiz();
+    });
+    // 保底：如果语音回调未触发，3秒后也启动
     setTimeout(function () {
         startQuiz();
-    }, 1500);
-
-    hintText.textContent = '跟着红色笔画写一写吧！';
+    }, 3000);
 }
 
 // ========================================
@@ -217,19 +229,35 @@ function startQuiz() {
                 const char = CHARACTERS[currentCharIndex];
                 hintText.textContent = '太棒了！"' + char + '"写好了！';
 
-                // 判断是否是最后一个字
-                if (currentCharIndex >= CHARACTERS.length - 1) {
-                    speak(char + '写得真好！');
-                    launchMiniConfetti(function () {
+                // 等语音和礼花都完成后再跳转
+                var speechDone = false;
+                var confettiDone = false;
+                var isLast = currentCharIndex >= CHARACTERS.length - 1;
+
+                function tryProceed() {
+                    if (!speechDone || !confettiDone) return;
+                    if (isLast) {
                         setTimeout(showCompletePage, 300);
-                    });
-                } else {
-                    speak(char + '写得真好！');
-                    launchMiniConfetti(function () {
+                    } else {
                         currentCharIndex++;
                         initCharacter(currentCharIndex);
-                    });
+                    }
                 }
+
+                speak(char + '写得真好！', function () {
+                    speechDone = true;
+                    tryProceed();
+                });
+                // 保底：语音最多等3秒
+                setTimeout(function () {
+                    speechDone = true;
+                    tryProceed();
+                }, 3000);
+
+                launchMiniConfetti(function () {
+                    confettiDone = true;
+                    tryProceed();
+                });
             }
         });
     });
@@ -372,11 +400,12 @@ function launchConfetti() {
 }
 
 // ========================================
-//  初始化启动
+//  防止 startQuiz 重复调用
 // ========================================
-document.addEventListener('DOMContentLoaded', function () {
-    // 首先确保语音引成就绪
-    setTimeout(function () {
-        initCharacter(0);
-    }, 500);
-});
+var quizStarted = false;
+var _origStartQuiz = startQuiz;
+startQuiz = function () {
+    if (quizStarted) return;
+    quizStarted = true;
+    _origStartQuiz();
+};
